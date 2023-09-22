@@ -1,14 +1,9 @@
-[[toc]]
-
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/I3_window_manager_logo.svg/1200px-I3_window_manager_logo.svg.png" width="200" height="200" />
 
-* [i3wm.org](https://i3wm.org/)
+* [i3wm.org](https://i3wm.org/)：這個是官方的documentation，我的文件只會說到對我來說有實用的功能。如果syntax有問題的話也應該找這裏
 
-<span style="color: red;font-size: 24px;">我使用的鍵盤layout是dvorak，config檔也是依此設定</span>
+* 這個說明的目的是介紹i3一些控制視窗的動作，其他的功能：如mode, rule, mark, exec, 多螢幕設定, 滑鼠binding... 等，會放在 advanced.md；還有控制外觀的功能，會放在appearence.md
 
-我之後會再配合qwerty寫config，現在的說明文件會依照qwerty寫
-
-主要會說明動作+config檔的文法
 
 # i3 介紹
 
@@ -61,6 +56,8 @@
 
 #### 切換使用的視窗
 
+##### 方向
+
 * &uarr; l(l) 、&darr; k(k)、&larr; ;(;)、&rarr; j(j)
 
 * 將焦點放在目前任一方向的另一視窗
@@ -72,7 +69,7 @@
 
     ```bash
     # Set Modifier Key
-    set mod Mod4
+    set $mod Mod4
     ...
     bindsym $mod+j focus left
     bindsym $mod+k focus down
@@ -82,6 +79,15 @@
     1. config檔的文法與bash相當類似，用```$var```帶入變數
     2. 宣告bindsym形態來設定shortcut
 * 註：j、k、l、; 可以用 &larr; &darr; &uarr; &rarr; 代替
+
+##### 浮動視窗
+
+* 注意在i3當中**tiling**和**floating**的視窗是**分開的兩層，所以想要將focus放到其他層，需要做切換
+
+* config
+    ```bash
+    bindsym $mod+space focus mode_toggle
+    ```
 
 #### 移動視窗
 
@@ -155,23 +161,99 @@
 
 * 使用 \<Mod\> + f，就可以將目前視窗全螢幕化，類似\<F11\>
 
-* config
+* config>
     ```bash
     bindsym $mod+f fullscreen toggle
     ```
 
 #### 最小化
 
-* i3 **沒有** 這個功能，原因可能是因爲沒辦法清楚定義
-    * 例如：有超過兩個視窗被最小化，要怎麼定義取消最小化？要指定哪一個視窗？
+* i3 **沒有** 這個直接implement這個功能，但是有幾個方式可以發揮類似功能
 
-* 取代方案：另外定義一個特別的工作區，最小化時將視窗丟過去；如果需要恢復，到那個工作區把視窗移回去即可
+* 取代方案：
+    1. 另外定義一個特別的工作區，最小化時將視窗丟過去；如果需要恢復，到那個工作區把視窗移回去即可
+    2. 利用scratchpad **(推薦)**
 
-* config
+* config (工作區)
     ```bash
     set $hd "0"
     bindsym $mod+Shift+b workspace number $hd
     bindsym $mod+b move container to workspace number $hd
     ```
 
-> To be continued...
+* scratchpad
+    1. 在scratchpad當中的視窗沒辦法被focus，也看不見；與最小化的作用一樣
+    2. 每一次scratchpad被打開的時候，會將下一個視窗往上推，所以每一個在裏面的視窗都會輪到，需要用的時候再拿出來
+    3. scratchpad顯示的視窗是放在當前的工作區，而且是floating狀態
+    ![img](../imgsrc/i3/scratchpad.png)
+
+* config (scratchpad)
+    ```bash
+    # Make the currently focused window a scratchpad
+    bindsym $mod+Shift+minus move scratchpad
+
+    # Show the first scratchpad window 
+    bindsym $mod+minus scratchpad show;
+    ```
+
+#### 視窗浮動
+
+* 視窗需要的時候可以單獨設爲floating，不需要的時候再放回去
+
+* config
+    ```bash
+    bindsym $mod+Shift+space floating toggle
+    ```
+
+#### 視窗大小
+
+* 可以調整當前視窗長寬
+
+* config
+    ```bash
+        bindsym $mod+Shift+j resize shrink width 10 px
+        bindsym $mod+Shift+k resize grow width 10 px
+        bindsym $mod+Shift+l resize shrink height 10 px
+        bindsym $mod+Shift+semicolon resize grow height 10 px
+    ```
+
+## 4. 視窗部署
+
+#### 指定新視窗
+
+* 剛剛仔細看前面的例子，可以注意到有些視窗有黃邊；這些黃邊是用來指示新的視窗會出現的方向
+    ![img](../imgsrc/i3/will_spawn.png)
+    ![img](../imgsrc/i3/has_spawn.png)
+
+* 指定新視窗的方式預設有spilt這個方式，分爲垂直或水平兩種方式；可惜方向是固定的(水平往右，垂直往下)，需要自己再喬一下
+
+* config語法
+    ```bash
+    # split in horizontal orientation
+    bindsym $mod+h split h
+
+    # split in vertical orientation
+    bindsym $mod+v split v
+
+    # split in horizontal, vertical orientation or none
+    bindsym $mod+b split toggle
+    ```
+
+#### 安排模式
+
+* 除了將所有視窗平鋪在螢幕上的方式之外(splithv)，i3還有提供其他模式：
+    * tabbed(看起來像是瀏覽器) 
+        ![img](../imgsrc/i3/mode_tabbed.png)
+        * 利用左右移動focus
+    * stacking(titlebar吃到飽)
+        ![img](../imgsrc/i3/mode_stacked.png)
+        * 利用上下移動focus
+
+* 這些模式是獨立的，一次只能設定一個，但是所有模式都可以放置floating視窗
+
+* config
+    ```bash
+    bindsym $mod+s layout stacking
+    bindsym $mod+w layout tabbed
+    bindsym $mod+e layout toggle split
+    ```

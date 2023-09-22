@@ -2,7 +2,8 @@
 
 * [i3wm.org](https://i3wm.org/)：這個是官方的documentation，我的文件只會說到對我來說有實用的功能。如果syntax有問題的話也應該找這裏
 
-* 這個說明的目的是介紹i3一些控制視窗的動作，其他的功能：如mode, rule, mark, exec, 多螢幕設定, 滑鼠binding... 等，會放在 advanced.md；還有控制外觀的功能，會放在appearence.md
+
+* 這個說明的目的是介紹i3一些控制視窗的動作，其他的功能：如mode, rule, mark, exec, 多螢幕設定, 滑鼠binding, i3-msg... 等，會放在 advanced.md；還有控制外觀的功能，會放在appearence.md
 
 
 # i3 介紹
@@ -56,6 +57,13 @@
 
 #### 切換使用的視窗
 
+##### 滑鼠
+
+* 將遊標移到那個視窗即可；要關掉的話，可以在config檔寫：
+    ```bash
+    focus_follows_mouse no
+    ```
+
 ##### 方向
 
 * &uarr; l(l) 、&darr; k(k)、&larr; ;(;)、&rarr; j(j)
@@ -106,7 +114,9 @@
     bindsym $mod+Shift+semicolon move right
     ```
 
-* 註：j、k、l、; 可以用 &larr; &darr; &uarr; &rarr; 代替
+    * 註：j、k、l、; 可以用 &larr; &darr; &uarr; &rarr; 代替
+
+* 也可以利用滑鼠：按住\<Win\>，按住滑鼠左鍵拖動視窗。在tiling mode也可以使用滑鼠shortcut
 
 ## 2. 工作區
 
@@ -207,6 +217,15 @@
 
 #### 視窗大小
 
+##### 滑鼠
+
+主要有兩種方式：
+
+* 將遊標放在border上拖動
+* 按住\<Win\>後用按住右鍵拖動
+
+##### shortcut
+
 * 可以調整當前視窗長寬
 
 * config
@@ -256,4 +275,22 @@
     bindsym $mod+s layout stacking
     bindsym $mod+w layout tabbed
     bindsym $mod+e layout toggle split
+    ```
+
+## 5. 其他
+
+* 當你的config檔寫好後，可以重新載入它；如果不行或是有問題直接重新啓動
+
+* 除此之外，要退出(登出)i3可以用```i3-msg exit```，前面的指令是生成退出的圖形界面:
+    ![exitimg](../imgsrc/i3/exiti3.png)
+    
+* config文法
+
+    ```bash
+    # reload the configuration file
+    bindsym $mod+Shift+p reload
+    # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+    bindsym $mod+Ctrl+p restart
+    # exit i3 (logs you out of your X session)
+    bindsym $mod+Shift+period exec "i3-nagbar -t warning -m 'End this session?' -B 'Yes, exit i3' 'i3-msg exit'"
     ```

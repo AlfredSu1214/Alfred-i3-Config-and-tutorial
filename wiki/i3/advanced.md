@@ -73,6 +73,11 @@
 
 * --no-startup-id 是啥？ 看這裏： [link](https://www.reddit.com/r/i3wm/comments/5p75nw/any_reason_to_not_use_nostartupid/) ；實際上使用的感覺真的差不多
 
+* 如果需要執行多行程式，也可以用分號隔開
+    ```bash
+    exec --no-startup-id connman-gtk; cbatticon; variety
+    ```
+
 * 如果需要執行shell script，也可以直接將shell script的位置打上去作爲指令
 
 ## 2. mode
@@ -107,7 +112,7 @@
 * 優點：
     1. binding多的時候不需要將鍵位安排到整個鍵盤，方便記憶
     2. 不需要壓住 Shift 又壓住 Ctrl 又壓住這個那個，比較舒服
-        ![what](https://cdn.trendhunterstatic.com/thumbs/ctrl-alt-del-tool.jpeg?auto=webp)
+    ![what](https://cdn.trendhunterstatic.com/thumbs/ctrl-alt-del-tool.jpeg?auto=webp)
 
 * 建議
     1. 記得一定要設定回```"default"```mode的binding，不然會卡在那裏
@@ -123,5 +128,90 @@
     3. 突然需要用firefox，但是沒注意到workspace 1有firefox
     4. 我又開了一個新的firefox
     5. 重複 1. ~ 4.直到我發現已經亂掉了
+    * 所以要是有一個不用讓我去找firefox的方法就好了
 
-> to be continued... 我需要再好好研究
+* i3提供了rule的功能，可以讓符合特定條件的視窗自動執行指定的動作
+
+#### criteria
+
+* 這個criteria是基於window的資訊構成的條件，關於完全的定義，請參考：[criteria類型](https://i3wm.org/docs/userguide.html#list_of_commands) ，另外，語法是使用 [regular expression](https://man7.org/linux/man-pages/man3/pcresyntax.3.html)
+
+* 比較常用的資訊通常可以由```xprop```得到
+    * 在terminal執行```xprop```後點擊想要知道資訊的視窗
+    ![xprop](../imgsrc/i3/xprop.png)
+    1. 黃色的部分是 ```window_type```: 分別有 normal, dialog, utility, toolbar, splash, menu, dropdown_menu, popup_menu, tooltip 和notification 這些類型
+    2. 橘色是```machine```: 簡單來說就是hostname
+    3. 紅色的部分是 ```instance```
+    4. 綠色的部分是 ```class```
+    5. 藍色的部分是 name: 是視窗的名稱，i3會先參考```_NET_WM_NAME```再參考```WM_NAME```
+    * ```instance``` 和 ```class```通常會受到開啓的程式影響，要怎麼利用這些參數需要多抓一些視窗會比較清楚
+
+* 除此之外，還有```workspace, urgent, tiling, floating```，這些資訊都是i3可以直接知道的
+
+#### 相關指令
+
+
+* assign
+    * 將符合條件的視窗放到指定的地方
+    * 語法: ```assign [criteria] <workspace/output>```
+    ```bash
+    # 到特定編碼的workspace
+    assign [class="firefox"] 2
+    # 到特定名稱的workspace
+    assign [class="^Urxvt$"] work
+    # 到主要output
+    assign [class="Alacritty"] output primary
+    ```
+
+* for_window
+    * 對符合條件的視窗執行指令
+    * 格式： ```for [criteria] <command>```
+    * 後面的指令基本上可以是任何config的指令
+    * e.g. 
+    ```bash
+    # 將所有dolphin的視窗設爲floating
+    for_window [class="dolphin"] floating enable
+    # 打開osu.exe時會傳送通知
+    for_window [class="osu.exe"] exec bash -c 'dunstify "Hey" "touch some grass"'
+    ```
+
+* focus, move
+    * 格式： ```[criteria] focus/move```
+    ```bash
+    # focus firefox的視窗
+    bindsym $mod+F11 [class="firefox"] focus
+    ```
+
+
+
+## 4. mark
+
+* 
+
+## 5. 多螢幕
+
+* 關於多螢幕的設定，可以看 [xrandr.md](https://github.com/AlfredSu1214/Alfred-i3-Config-and-tutorial/blob/main/wiki/xrandr.md)，i3只負責視窗的部分
+
+* i3 的一個workspace只會出現在一個螢幕，預設創建的方式是看鼠標在哪個螢幕
+
+* 和window一樣，workspace也可以指定在哪一個螢幕創建 
+
+* config語法
+    ```bash
+    workspace 10 output DP-1
+    ```
+
+* 當然，除了指定外，也可以動態的將workspace移到某一個螢幕
+    ```bash
+    bindsym $mod+x move workspace to output next
+    ```
+
+* config語法: workspace總共有幾個變數
+    1. (non)primary: (次)主要的輸出 (不知道的請先看xrandr.md)
+    2. next/prev:上/下一個
+    3. up/down/left/right: 方向
+    4. {output1 output2 output3...} 從 output1, output2, output3 內輪流放置
+    * e.g.
+        ```bash
+        bindsym $mod+x move workspace to output VGA1 LVDS1
+        ```

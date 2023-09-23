@@ -40,11 +40,13 @@
 * [general]()
 
 * i3
-    1. [基本概念](https://github.com/AlfredSu1214/Alfred-i3-Config-and-tutorial/blob/main/wiki/i3/general.md)
-    2. [config 說明](https://github.com/AlfredSu1214/Alfred-i3-Config-and-tutorial/blob/main/wiki/i3/config.md)
+    1. [基本操作](https://github.com/AlfredSu1214/Alfred-i3-Config-and-tutorial/blob/main/wiki/i3/basic.md)
+    2. [更多設定](https://github.com/AlfredSu1214/Alfred-i3-Config-and-tutorial/blob/main/wiki/i3/advanced.md)
 
 * [polybar 說明]()
 
 * [alacritty 說明]()
 
-> to be continued
+## TODO
+
+* 完成i3的說明：mark，rule，多螢幕，外觀

@@ -186,7 +186,9 @@
 
 ## 4. mark
 
-* 
+* i3有許多功能參考了vim，除了mode以外，還有mark；那麼mark是什麼意思？可以參考這裏： [vim mark](https://medium.com/unalai/vim-%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98-%E6%A8%99%E8%A8%98-marks-465fe6c7cfb9)。簡單來說，就像是bookmark
+
+* i3
 
 ## 5. 多螢幕
 
